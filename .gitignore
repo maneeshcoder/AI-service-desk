@@ -1,0 +1,44 @@
+# --- Environment & secrets ---
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+
+# --- Node / npm ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Next.js (client) ---
+client/.next/
+client/out/
+client/.vercel/
+client/next-env.d.ts
+
+# --- Server build output ---
+server/dist/
+server/build/
+
+# --- Testing ---
+coverage/
+server/coverage/
+
+# --- Docker ---
+*.pid
+
+# --- Editor / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+logs/
+*.log
+
+# --- Misc ---
+.cache/
+tmp/
