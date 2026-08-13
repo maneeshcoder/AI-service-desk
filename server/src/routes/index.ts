@@ -1,12 +1,12 @@
-import { Express } from "express";
-import cookieParser from "cookie-parser";
-import cors from "cors";
 
-const app = Express();
-app.use(cookieParser());
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL, // e.g. http://localhost:3000 — never "*" with credentials
-    credentials: true,
-  })
-);
+import { Router } from "express";
+import authRoutes from "./auth.routes";
+import ticketRoutes from "./ticket.routes";
+
+const router = Router();
+router.use("/auth", authRoutes);
+router.use("/tickets", ticketRoutes);
+
+export default router;
+
+
