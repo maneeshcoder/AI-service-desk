@@ -16,7 +16,7 @@ export async function getTickets(user: { userId: string; role: string }) {
   if (user.role === "employee") {
     return Ticket.find({ createdBy: user.userId }).sort({ createdAt: -1 });
   }
-  // support-engineer and admin see everything for now
+  // support-engineer and admin  
   return Ticket.find().sort({ createdAt: -1 }).populate("createdBy", "name email");
 }
 
