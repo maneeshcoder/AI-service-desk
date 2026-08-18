@@ -22,10 +22,10 @@ export async function getTickets(user: { userId: string; role: string }) {
 
 export async function getTicketById(id: string, user: { userId: string; role: string }) {
   const ticket = await Ticket.findById(id).populate("createdBy", "name email");
-  if (!ticket) throw new Error("Ticket not found");
+  if (!ticket) throw new AppError("Ticket not found", 404);
 
   if (user.role === "employee" && ticket.createdBy._id.toString() !== user.userId) {
-    throw Object.assign(new Error("Forbidden"), { status: 403 });
+    throw new AppError("Forbidden", 403);
   }
   return ticket;
 }
@@ -39,6 +39,6 @@ export async function updateTicketStatus(
     throw new AppError("Forbidden", 403);
   }
   const ticket = await Ticket.findByIdAndUpdate(id, { status }, { new: true });
-  if (!ticket) throw new Error("Ticket not found");
+  if (!ticket) throw new AppError("Ticket not found", 404);
   return ticket;
 }

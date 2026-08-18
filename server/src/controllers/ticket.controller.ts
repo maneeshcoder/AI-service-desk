@@ -19,11 +19,11 @@ export const getTickets = asyncHandler(async (req: AuthRequest, res: Response) =
 });
 
 export const getTicketById = asyncHandler(async (req: AuthRequest, res: Response) => {
-  const ticket = await ticketService.getTicketById(req.params.id, req.user!);
+  const ticket = await ticketService.getTicketById(req.params.id as string, req.user!);
   res.status(200).json(ticket);
 });
 
 export const updateTicketStatus = asyncHandler(async (req: AuthRequest, res: Response) => {
-  const ticket = await ticketService.updateTicketStatus(req.params.id, req.body.status, req.user!);
+  const ticket = await ticketService.updateTicketStatus(req.params.id as string, req.body.status, req.user!);
   res.status(200).json(ticket);
 });

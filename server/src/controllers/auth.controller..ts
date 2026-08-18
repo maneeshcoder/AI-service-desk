@@ -2,19 +2,15 @@ import { loginUser, registerUser } from "../services/auth.service";
 import { Request,Response } from "express"
 import { signAccessToken,verifyRefreshToken} from "../utils/jwt.util";
 import { setRefreshCookie,clearRefreshCookie } from "../utils/cookie.util";
+import { asyncHandler } from "../utils/asyncHandler";
 
-export async function register(req: Request, res: Response) {
-  try {
+export const  register = asyncHandler(async(req: Request, res: Response) => {
     const { name, email, password } = req.body;
     const user = await registerUser(name, email, password);
     res.status(201).json({ id: user._id, name: user.name, email: user.email, role: user.role });
-  } catch (err) {
-    res.status(400).json({ message: (err as Error).message });
-  }
-}
+})
 
-export async function login(req: Request, res: Response) {
-  try {
+export  const login = asyncHandler(async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const { user, accessToken, refreshToken } = await loginUser(email, password);
 
@@ -24,10 +20,7 @@ export async function login(req: Request, res: Response) {
       accessToken,
       user: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
-  } catch (err) {
-    res.status(401).json({ message: (err as Error).message });
-  }
-}
+});
 
 
 export async function refresh(req: Request, res: Response) {
