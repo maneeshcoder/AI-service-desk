@@ -3,6 +3,8 @@ import { Request,Response } from "express"
 import { signAccessToken,verifyRefreshToken} from "../utils/jwt.util";
 import { setRefreshCookie,clearRefreshCookie } from "../utils/cookie.util";
 import { asyncHandler } from "../utils/asyncHandler";
+import { AuthRequest } from "../middlewares/auth.middleware";
+import User  from "../models/user.model";
 
 export const  register = asyncHandler(async(req: Request, res: Response) => {
     const { name, email, password } = req.body;
@@ -38,7 +40,10 @@ export async function refresh(req: Request, res: Response) {
   }
 }
 
-
+export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const user = await User.findById(req.user!.userId).select("-password");
+  res.status(200).json(user);
+});
 
 export async function logout(req: Request, res: Response) {
   clearRefreshCookie(res);
