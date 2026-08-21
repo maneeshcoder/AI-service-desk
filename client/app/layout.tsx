@@ -1,19 +1,18 @@
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
-import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+import { Providers } from "./providers";
 
 
 export default function RootLayout(
   { children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en" className={cn("font-sans", geist.variable)}
+      lang="en" 
     >
 
-      <body> <AuthProvider>{children}</AuthProvider> </body>
+      <body> 
+        <Providers>
+         <AuthProvider>{children}</AuthProvider> </Providers> </body>
     </html>
   );
 }
