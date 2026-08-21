@@ -7,7 +7,9 @@ import userRoutes from "./user.routes";
 const router = Router();
 router.use("/auth", authRoutes);
 router.use("/tickets", ticketRoutes);
+router.use("/users", userRoutes);
+
 
 export default router;
-router.use("/users", userRoutes);
+
 
