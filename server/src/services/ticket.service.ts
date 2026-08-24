@@ -8,11 +8,19 @@ interface CreateTicketInput {
   createdBy: string;
 }
 
+interface TicketQuery {
+  search?: string;
+  status?: string;
+  priority?: string;
+  sortBy?: "createdAt" | "priority";
+  order?: "asc" | "desc";
+}
+
 export async function createTicket(input: CreateTicketInput) {
   return Ticket.create(input);
 }
 
-export async function getTickets(user: { userId: string; role: string }) {
+export async function getTickets(user: { userId: string; role: string }, query: TicketQuery = {}) {
   if (user.role === "employee") {
     return Ticket.find({ createdBy: user.userId }).sort({ createdAt: -1 });
   }
