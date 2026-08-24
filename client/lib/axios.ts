@@ -31,7 +31,12 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+     const isAuthEndpoint =
+      originalRequest.url?.includes("/auth/refresh") ||
+      originalRequest.url?.includes("/auth/login") ||
+      originalRequest.url?.includes("/auth/register");
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint ) {
       originalRequest._retry = true;
 
       if (isRefreshing) {
@@ -59,7 +64,6 @@ api.interceptors.response.use(
       } catch (refreshError) {
         isRefreshing = false;
         setAccessToken(null);
-        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }

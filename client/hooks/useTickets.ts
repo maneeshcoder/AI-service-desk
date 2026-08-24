@@ -12,6 +12,17 @@ export function useTickets() {
   });
 }
 
+export function useTicket(ticketId: string) {
+  return useQuery<Ticket>({
+    queryKey: ["ticket", ticketId],
+    queryFn: async () => {
+      const { data } = await api.get(`/tickets/${ticketId}`);
+      return data;
+    },
+    enabled: !!ticketId,
+  });
+}
+
 export function useCreateTicket() {
   const queryClient = useQueryClient();
 

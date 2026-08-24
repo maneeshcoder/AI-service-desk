@@ -2,6 +2,7 @@
 
 import { useTickets } from "@/hooks/useTickets";
 import { Ticket } from "@/types";
+import Link from "next/link";
 
 const STATUS_STYLES: Record<Ticket["status"], string> = {
   open: "bg-blue-50 text-blue-700 border-blue-200",
@@ -39,7 +40,11 @@ export function TicketList() {
   return (
     <div className="border border-slate-200 rounded-lg divide-y divide-slate-200 bg-white">
       {tickets.map((ticket) => (
-        <div key={ticket._id} className="px-5 py-4 flex items-center justify-between gap-4">
+       <Link
+          key={ticket._id}
+          href={`/employee/tickets/${ticket._id}`}
+          className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-slate-50 transition-colors"
+        >
           <div className="min-w-0">
             <p className="text-sm font-medium text-slate-900 truncate">{ticket.title}</p>
             <p className="text-sm text-slate-500 truncate">{ticket.description}</p>
@@ -54,7 +59,7 @@ export function TicketList() {
               {ticket.status}
             </span>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );
