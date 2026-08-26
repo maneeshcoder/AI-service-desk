@@ -2,10 +2,12 @@
 
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { Sparkles } from "lucide-react";
 import { ProtectedRoute } from "@/components/shared/ProtectedRoute";
 import { DashboardLayout } from "@/components/shared/DashboardLayout";
 import { useTicket } from "@/hooks/useTicket";
 import { useComments, useAddComment } from "@/hooks/useComments";
+import { TicketTimeline } from "@/components/tickets/TicketTimeline";
 import { Button } from "@/components/ui/button";
 
 export default function TicketDetailPage() {
@@ -14,6 +16,7 @@ export default function TicketDetailPage() {
   const { data: comments } = useComments(id);
   const addComment = useAddComment(id);
   const [message, setMessage] = useState("");
+ const EMPLOYEE = ["employee"] as const;
 
   async function handleSend() {
     if (!message.trim()) return;
@@ -23,7 +26,7 @@ export default function TicketDetailPage() {
 
   if (isLoading || !ticket) {
     return (
-      <ProtectedRoute allowedRoles={["employee"]}>
+      <ProtectedRoute allowedRoles={EMPLOYEE}>
         <DashboardLayout>
           <p className="text-sm text-slate-500">Loading…</p>
         </DashboardLayout>
@@ -40,6 +43,22 @@ export default function TicketDetailPage() {
             <p className="text-sm text-slate-500 mt-1">{ticket.description}</p>
           </div>
 
+          {ticket.aiSummary && (
+            <div className="rounded-lg border border-indigo-100 bg-indigo-50/50 px-5 py-4">
+              <div className="flex items-center gap-2 mb-1.5">
+                <Sparkles className="h-3.5 w-3.5 text-indigo-600" />
+                <p className="text-xs font-medium uppercase tracking-wider text-indigo-700">AI Summary</p>
+              </div>
+              <p className="text-sm text-slate-700">{ticket.aiSummary}</p>
+              <div className="flex items-center gap-3 mt-2">
+                <span className="text-xs text-slate-500 capitalize">Category: {ticket.category}</span>
+                <span className="text-xs text-slate-500 capitalize">Priority: {ticket.priority}</span>
+              </div>
+            </div>
+          )}
+
+          <TicketTimeline ticketId={id} />
+
           <div className="border border-slate-200 rounded-lg bg-white divide-y divide-slate-200">
             {comments?.length ? (
               comments.map((c) => (
@@ -53,7 +72,7 @@ export default function TicketDetailPage() {
             )}
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <input
               value={message}
               onChange={(e) => setMessage(e.target.value)}

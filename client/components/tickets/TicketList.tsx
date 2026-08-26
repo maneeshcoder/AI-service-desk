@@ -1,8 +1,14 @@
 "use client";
 
-import { useTickets } from "@/hooks/useTickets";
+import { useTickets } from "@/hooks/useTicket";
 import { Ticket } from "@/types";
 import Link from "next/link";
+
+
+interface Props {
+  filters?: { search?: string; status?: string; priority?: string; order?: string; };
+  basePath?: string;
+}
 
 const STATUS_STYLES: Record<Ticket["status"], string> = {
   open: "bg-blue-50 text-blue-700 border-blue-200",
@@ -18,8 +24,8 @@ const PRIORITY_STYLES: Record<Ticket["priority"], string> = {
   urgent: "text-red-700",
 };
 
-export function TicketList() {
-  const { data: tickets, isLoading, isError } = useTickets();
+export function TicketList({ filters = {}, basePath = "/employee" }: Props) {
+  const { data: tickets, isLoading, isError } = useTickets(filters);
 
   if (isLoading) {
     return <p className="text-sm text-slate-500">Loading tickets…</p>;
@@ -40,16 +46,19 @@ export function TicketList() {
   return (
     <div className="border border-slate-200 rounded-lg divide-y divide-slate-200 bg-white">
       {tickets.map((ticket) => (
-       <Link
+        <Link
           key={ticket._id}
-          href={`/employee/tickets/${ticket._id}`}
-          className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-slate-50 transition-colors"
+          href={`${basePath}/tickets/${ticket._id}`}
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 px-4 sm:px-5 py-4 hover:bg-slate-50 transition-colors"
         >
           <div className="min-w-0">
             <p className="text-sm font-medium text-slate-900 truncate">{ticket.title}</p>
-            <p className="text-sm text-slate-500 truncate">{ticket.description}</p>
+            <p className="text-sm text-slate-500 truncate">{ticket.aiSummary || ticket.description}</p>
           </div>
           <div className="flex items-center gap-3 shrink-0">
+            {ticket.category && (
+              <span className="text-xs font-medium text-slate-500 capitalize">{ticket.category}</span>
+            )}
             <span className={`text-xs font-medium ${PRIORITY_STYLES[ticket.priority]}`}>
               {ticket.priority}
             </span>
@@ -62,5 +71,6 @@ export function TicketList() {
         </Link>
       ))}
     </div>
+
   );
 }

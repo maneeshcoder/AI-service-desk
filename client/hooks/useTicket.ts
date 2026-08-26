@@ -2,16 +2,24 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import { Ticket } from "@/types";
 
-export function useTickets() {
+
+interface TicketFilters {
+  search?: string;
+  status?: string;
+  priority?: string;
+  sortBy?: string;
+  order?: string;
+}
+
+export function useTickets(filters: TicketFilters = {}) {
   return useQuery<Ticket[]>({
-    queryKey: ["tickets"],
+    queryKey: ["tickets", filters],
     queryFn: async () => {
-      const { data } = await api.get("/tickets");
+      const { data } = await api.get("/tickets", { params: filters });
       return data;
     },
   });
 }
-
 export function useTicket(ticketId: string) {
   return useQuery<Ticket>({
     queryKey: ["ticket", ticketId],

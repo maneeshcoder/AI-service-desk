@@ -11,7 +11,7 @@ export function ProtectedRoute({
   allowedRoles,
 }: {
   children: React.ReactNode;
-  allowedRoles?: Role[];
+  allowedRoles?: readonly  Role[];
 }) {
   const { user, loading } = useAuth();
   const router = useRouter();
