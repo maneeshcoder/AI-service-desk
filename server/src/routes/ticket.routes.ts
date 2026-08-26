@@ -15,7 +15,17 @@ router.post("/",validate(createTicketSchema) ,ticketController.createTicket);
 router.get("/", ticketController.getTickets);
 router.get("/:id", ticketController.getTicketById);
 router.patch("/:id/status",validate(updateStatusSchema) , authorize("support-engineer", "admin"), ticketController.updateTicketStatus);
-router.get("/:id/comments", ticketController.getTicketById); // already exists as separate concern — see note
 router.post("/:id/comments", validate(addCommentSchema), addComment);
 router.get("/:id/comments", getComments);
+router.patch(
+  "/:id/assign",
+  authorize("support-engineer", "admin"),
+  ticketController.assignTicket
+);
+router.get("/:id/history", ticketController.getTicketHistory);
+router.get(
+  "/:id/suggestion",
+  authorize("support-engineer", "admin"),
+  ticketController.getSuggestedSolution
+);
 export default router;

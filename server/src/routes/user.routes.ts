@@ -5,6 +5,6 @@ import { authenticate } from "../middlewares/auth.middleware";
 import { authorize } from "../middlewares/rbac.middleware";
 
 const router = Router();
-router.get("/", authenticate, authorize("admin"), getAllUsers);
+router.get("/", authenticate, authorize("admin","support-engineer"), getAllUsers);
 
 export default router;
