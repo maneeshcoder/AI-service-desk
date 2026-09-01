@@ -101,3 +101,30 @@ Give 2-5 concrete, actionable steps a support engineer could try, ordered from m
         return { steps: [], reasoning: "" };
     }
 }
+
+
+export async function getEmbedding(text: string): Promise<number[]> {
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
+    const embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" });
+    const result = await embeddingModel.embedContent(text);
+    return result.embedding.values;
+}
+
+export function cosineSimilarity(a: number[], b: number[]): number {
+    if (a.length !== b.length) {
+        throw new Error("Vectors must be the same length to compare");
+    }
+    let dotProduct = 0;
+    let normA = 0;
+    let normB = 0;
+
+    for (let i = 0; i < a.length; i++) {
+        const ai = a[i]!;
+        const bi = b[i]!;
+        dotProduct += ai * bi;
+        normA += ai * ai;
+        normB += bi * bi;
+    }
+
+    return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+}

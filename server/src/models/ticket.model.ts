@@ -13,6 +13,7 @@ export interface ITicket extends Document {
     createdBy: Types.ObjectId;
     assignedTo?: Types.ObjectId;
     createdAt: Date;
+    embedding?: number[];
 };
 
 
@@ -52,6 +53,10 @@ const ticketSchema = new Schema<ITicket>(
             type: Schema.Types.ObjectId,
             ref: "User"
         },
+        embedding: { 
+            type: [Number],
+             select: false
+         },
     },
     { timestamps: true }
 );

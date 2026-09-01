@@ -6,12 +6,12 @@ import { suggestSolution } from "../services/ai.service";
 
 export const createTicket = asyncHandler(async (req: AuthRequest, res: Response) => {
   const { title, description } = req.body;
-  const ticket = await ticketService.createTicket({
+  const { ticket, potentialDuplicates }  = await ticketService.createTicket({
     title,
     description,
     createdBy: req.user!.userId,
   });
-  res.status(201).json(ticket);
+  res.status(201).json({ ...ticket.toObject(), potentialDuplicates });
 });
 
 export const getTickets = asyncHandler(async (req: AuthRequest, res: Response) => {

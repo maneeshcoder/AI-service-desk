@@ -3,6 +3,7 @@ import { AuthRequest } from "../middlewares/auth.middleware";
 import { AppError } from "../utils/AppError";
 import TicketHistory from "../models/ticketHistory.model";
 import { analyzeTicket } from "./ai.service";
+import { findPotentialDuplicates } from "./duplicateDetection.service";
 
 
 interface CreateTicketInput {
@@ -21,13 +22,15 @@ interface TicketQuery {
 
 export async function createTicket(input: CreateTicketInput) {
   const analysis = await analyzeTicket(input.title, input.description);
-
-  return Ticket.create({
+  const { embedding, matches } = await findPotentialDuplicates(input.title, input.description);
+  const ticket = await Ticket.create({
     ...input,
     category: analysis.category,
     priority: analysis.priority,
     aiSummary: analysis.summary,
+    embedding,
   });
+  return { ticket, potentialDuplicates: matches };
 }
 
 export async function getTickets(
