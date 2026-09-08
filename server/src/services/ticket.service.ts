@@ -4,6 +4,7 @@ import { AppError } from "../utils/AppError";
 import TicketHistory from "../models/ticketHistory.model";
 import { analyzeTicket } from "./ai.service";
 import { findPotentialDuplicates } from "./duplicateDetection.service";
+import { getIO } from "../sockets";
 
 
 interface CreateTicketInput {
@@ -95,6 +96,17 @@ export async function updateTicketStatus(
     to: status,
   });
 
+  console.log("Before socket emit");
+
+  getIO().to(`ticket:${id}`).emit("status-updated", {
+    ticketId: id,
+    status,
+    updatedBy: user.userId,
+  });
+
+  console.log("after socket emit");
+
+
   return ticket;
 }
 
@@ -121,6 +133,11 @@ export async function assignTicket(
     from: previousAssignee,
     to: engineerId ?? "unassigned",
   });
+
+  getIO().to(`ticket:${id}`).emit("assignment-updated", {
+  ticketId: id,
+  assignedTo: user.userId,
+});
 
   return ticket;
 }

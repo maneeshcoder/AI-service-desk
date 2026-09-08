@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { AppError } from "../utils/AppError";
-
+import { redis } from "../config/redis";
+import crypto from "crypto";
 
 export interface TicketAnalysis {
     category: "network" | "hardware" | "software" | "account" | "other";
@@ -27,10 +28,18 @@ function getGeminiModel() {
     });
 }
 
+function hashTicketText(title: string, description: string): string {
+    return crypto.createHash("sha256").update(`${title}|${description}`).digest("hex");
+}
 export async function analyzeTicket(title: string, description: string): Promise<TicketAnalysis> {
 
-
     const model = getGeminiModel();
+    const cacheKey = `ai:analysis:${hashTicketText(title, description)}`;
+
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+        return JSON.parse(cached);
+    }
     const prompt = `You are an IT support triage assistant. Analyze this support ticket and respond with ONLY a JSON object, no other text.
 
 Ticket title: ${title}
@@ -53,14 +62,15 @@ Respond with ONLY the JSON object.`;
 
     try {
         const result = await model.generateContent(prompt);
-        const text = result.response.text();
-        const parsed = JSON.parse(text);
-
-        return {
+        const parsed = JSON.parse(result.response.text());
+        const analysis: TicketAnalysis = {
             category: parsed.category ?? "other",
             priority: parsed.priority ?? "medium",
             summary: parsed.summary ?? title,
         };
+
+        await redis.set(cacheKey, JSON.stringify(analysis), "EX", 60 * 60 * 24); // cache for 24h
+        return analysis;
     } catch (err) {
         console.error("AI analysis failed:", err);
         // fall back to safe defaults rather than blocking ticket creation
@@ -105,7 +115,7 @@ Give 2-5 concrete, actionable steps a support engineer could try, ordered from m
 
 export async function getEmbedding(text: string): Promise<number[]> {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
-    const embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" });
+    const embeddingModel = genAI.getGenerativeModel({ model: "gemini-embedding-001" });
     const result = await embeddingModel.embedContent(text);
     return result.embedding.values;
 }
