@@ -13,6 +13,7 @@ import { TicketTimeline } from "@/components/tickets/TicketTimeline";
 import { SuggestedSolution } from "@/components/tickets/SuggestedSolution";
 import { Button } from "@/components/ui/button";
 import { Ticket } from "@/types";
+import { useTicketSocket } from "@/hooks/useTicketSocket";
 
 const STATUS_OPTIONS: Ticket["status"][] = ["open", "in-progress", "resolved", "closed"];
 
@@ -26,6 +27,7 @@ export default function SupportTicketDetailPage() {
   const assignTicket = useAssignTicket(id);
   const [message, setMessage] = useState("");
   const SUPPORT_ROLES = ["support-engineer"] as const;
+  useTicketSocket(id);
 
   async function handleSend() {
     if (!message.trim()) return;

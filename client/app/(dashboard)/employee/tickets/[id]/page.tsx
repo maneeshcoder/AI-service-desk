@@ -9,6 +9,7 @@ import { useTicket } from "@/hooks/useTicket";
 import { useComments, useAddComment } from "@/hooks/useComments";
 import { TicketTimeline } from "@/components/tickets/TicketTimeline";
 import { Button } from "@/components/ui/button";
+import { useTicketSocket } from "@/hooks/useTicketSocket";
 
 export default function TicketDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +18,7 @@ export default function TicketDetailPage() {
   const addComment = useAddComment(id);
   const [message, setMessage] = useState("");
  const EMPLOYEE = ["employee"] as const;
+ useTicketSocket(id);
 
   async function handleSend() {
     if (!message.trim()) return;

@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { api, setAccessToken } from "@/lib/axios";
+import { connectSocket, disconnectSocket } from "@/lib/socket";
 
 interface User {
   id: string;
@@ -24,15 +25,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // on app load, try silently refreshing — if the httpOnly cookie is still
-  // valid, this restores the session without asking the user to log in again
+
   useEffect(() => {
     async function restoreSession() {
       try {
         const { data } = await api.post("/auth/refresh");
         setAccessToken(data.accessToken);
-        const me = await api.get("/auth/me"); // see note below
+        const me = await api.get("/auth/me"); 
         setUser(me.data);
+        connectSocket(data.accessToken);
       } catch {
         setUser(null);
       } finally {
@@ -46,6 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data } = await api.post("/auth/login", { email, password });
     setAccessToken(data.accessToken);
     setUser(data.user);
+    connectSocket(data.accessToken);
   }
 
   async function register(name: string, email: string, password: string) {
@@ -56,6 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await api.post("/auth/logout");
     setAccessToken(null);
     setUser(null);
+    disconnectSocket();
   }
 
   return (
