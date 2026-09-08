@@ -8,6 +8,7 @@ import { TicketFilters } from "@/components/tickets/TicketFilters";
 import { TicketList } from "@/components/tickets/TicketList";
 import { CreateTicketForm } from "@/components/tickets/CreateTicketForm";
 import { Button } from "@/components/ui/button";
+import { ChatWidget } from "@/components/chatbot/ChatWidget";
 
 export default function EmployeeDashboard() {
   const [showForm, setShowForm] = useState(false);
@@ -20,7 +21,7 @@ export default function EmployeeDashboard() {
   return (
     <ProtectedRoute allowedRoles={EMPLOYEE}>
       <DashboardLayout>
-
+        <ChatWidget />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
           <h1 className="text-xl font-semibold text-slate-900">My Tickets</h1>
           <Button onClick={() => setShowForm((s) => !s)} className="w-full sm:w-auto">
