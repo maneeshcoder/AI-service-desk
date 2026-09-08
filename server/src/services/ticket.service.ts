@@ -96,15 +96,12 @@ export async function updateTicketStatus(
     to: status,
   });
 
-  console.log("Before socket emit");
 
   getIO().to(`ticket:${id}`).emit("status-updated", {
     ticketId: id,
     status,
     updatedBy: user.userId,
   });
-
-  console.log("after socket emit");
 
 
   return ticket;
