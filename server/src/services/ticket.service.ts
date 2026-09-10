@@ -97,7 +97,7 @@ export async function updateTicketStatus(
   });
 
 
-  getIO().to(`ticket:${id}`).emit("status-updated", {
+  getIO()?.to(`ticket:${id}`).emit("status-updated", {
     ticketId: id,
     status,
     updatedBy: user.userId,
@@ -131,7 +131,7 @@ export async function assignTicket(
     to: engineerId ?? "unassigned",
   });
 
-  getIO().to(`ticket:${id}`).emit("assignment-updated", {
+  getIO()?.to(`ticket:${id}`).emit("assignment-updated", {
   ticketId: id,
   assignedTo: user.userId,
 });

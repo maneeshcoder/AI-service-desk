@@ -39,19 +39,33 @@ export const updateTicketStatus = asyncHandler(async (req: AuthRequest, res: Res
 export const assignTicket = asyncHandler(async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
   const { engineerId } = req.body;
-  const ticket = await ticketService.assignTicket(id!, engineerId || null, req.user!);
+  if (!id || Array.isArray(id)) {
+  res.status(400);
+  throw new Error("Invalid ID");
+}
+
+  const ticket = await ticketService.assignTicket(id, engineerId || null, req.user!);
   res.status(200).json(ticket);
 });
 
 export const getTicketHistory = asyncHandler(async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
-  const history = await ticketService.getTicketHistory(id!);
+ if (!id || Array.isArray(id)) {
+  res.status(400);
+  throw new Error("Invalid ID");
+}
+
+  const history = await ticketService.getTicketHistory(id);
   res.status(200).json(history);
 });
 
 export const getSuggestedSolution = asyncHandler(async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
-  const ticket = await ticketService.getTicketById(id!, req.user!);
+  if (!id || Array.isArray(id)) {
+  res.status(400);
+  throw new Error("Invalid ID");
+}
+  const ticket = await ticketService.getTicketById(id, req.user!);
   const suggestion = await suggestSolution(ticket.title, ticket.description, ticket.category ?? "other");
   res.status(200).json(suggestion);
 });

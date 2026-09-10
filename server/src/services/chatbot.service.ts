@@ -36,11 +36,12 @@ export async function continueChat(
   sessionId: string,
   userMessage: string
 ): Promise<{ message: string; stage: string; shouldCreateTicket: boolean }> {
+  try {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
-const chatModel = genAI.getGenerativeModel({
-  model: "gemini-3.6-flash",
-  generationConfig: { responseMimeType: "application/json" },
-});
+  const chatModel = genAI.getGenerativeModel({
+    model: "gemini-3.6-flash",
+    generationConfig: { responseMimeType: "application/json" },
+  });
   const historyKey = `chat:history:${sessionId}`;
   const rawHistory = await redis.get(historyKey);
   const history: ChatTurn[] = rawHistory ? JSON.parse(rawHistory) : [];
@@ -65,6 +66,13 @@ const chatModel = genAI.getGenerativeModel({
     stage: parsed.stage,
     shouldCreateTicket: parsed.shouldCreateTicket ?? false,
   };
+  } catch (err) {
+    console.error("Chatbot AI call failed:", err);
+    return {
+      message: "I'm having trouble responding right now — please try again in a moment, or describe your issue and I'll create a ticket for you directly.",
+      stage: "unresolved",
+      shouldCreateTicket: true,
+  }}
 }
 
 export async function getFullConversation(sessionId: string): Promise<string> {

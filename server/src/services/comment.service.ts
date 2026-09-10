@@ -8,7 +8,7 @@ export async function addComment(ticketId: string, authorId: string, message: st
   if (!ticket) throw new AppError("Ticket not found", 404);
 
   const createdComment =  Comment.create({ ticket: ticketId, author: authorId, message });
-  getIO().to(`ticket:${ticketId}`).emit("new-comment", {
+  getIO()?.to(`ticket:${ticketId}`).emit("new-comment", {
     ticketId,
     comment: createdComment,
   });
