@@ -1,8 +1,8 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-  withCredentials: true, // sends the httpOnly refresh cookie automatically
+  baseURL: "/api",
+  withCredentials: true,
 });
 
 let accessToken: string | null = null;
