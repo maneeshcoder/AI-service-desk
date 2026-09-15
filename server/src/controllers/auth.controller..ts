@@ -33,7 +33,15 @@ export async function refresh(req: Request, res: Response) {
 
   try {
     const payload = verifyRefreshToken(token);
-    const newAccessToken = signAccessToken({ userId: payload.userId, role: payload.role });
+     const user = await User.findById(payload.userId).select("_id role");
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    const newAccessToken = signAccessToken({
+      userId: user._id.toString(),
+      role: user.role,                
+    });
     res.status(200).json({ accessToken: newAccessToken });
   } catch {
     return res.status(401).json({ message: "Invalid or expired refresh token" });
