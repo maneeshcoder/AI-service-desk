@@ -11,7 +11,9 @@ interface DashboardStats {
 }
 
 export function useAnalytics() {
+  
   return useQuery<DashboardStats>({
+    
     queryKey: ["analytics"],
     queryFn: async () => {
       const { data } = await api.get("/analytics/dashboard");
